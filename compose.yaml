@@ -8,4 +8,4 @@ services:
       - .:/app
     environment:
       PYTHONPATH: /app
-    init : true
+    init: true

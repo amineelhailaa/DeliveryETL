@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: .
+    image: delivery-eta:0.1
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      PYTHONPATH: /app
+    init : true

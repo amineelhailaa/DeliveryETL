@@ -1,10 +1,31 @@
 import pandas as pd
 from pathlib import Path
 from sklearn.model_selection import train_test_split
-RAW_DATA_PATH = Path(__file__).resolve().parents[1] / "data/raw/dataset-1.csv"
+RAW_DATA_PATH = Path(__file__).resolve().parents[1] / "data/raw/dataset-2.csv"
 
-CATEGORICAL_COLUMNS = ["Weather", "Traffic_Level", "Time_of_Day", "Vehicle_Type"]
-NUMERICAL_COLUMNS = ["Order_ID", "Distance_km", "Preparation_Time_min", "Courier_Experience_yrs", "Delivery_Time_min"]
+
+
+CATEGORICAL_COLUMNS = ["Weatherconditions",
+                       "Road_traffic_density",
+                       "Type_of_vehicle",
+                       ]
+
+NUMERICAL_COLUMNS = [
+                     "Restaurant_latitude",
+                     "Restaurant_longitude",
+                     "Delivery_location_latitude",
+                     "Delivery_location_longitude",
+                     "Time_taken(min)",
+                    ]
+
+
+
+TIME_COLUMNS = [
+    "Time_Order_picked"
+]
+
+
+
 
 
 def load_raw_data(path=RAW_DATA_PATH):
@@ -13,14 +34,70 @@ def load_raw_data(path=RAW_DATA_PATH):
 
 def clean_delivery_data(df):
     cleaned = df.copy()
+    cleaned = cleaned.drop(columns=["ID",
+                                    "Delivery_person_ID",
+                                    "Delivery_person_Age",
+                                    "Delivery_person_Ratings",
+                                    "Type_of_order",
+                                    "multiple_deliveries",
+                                    "Order_Date",
+                                    "Time_Orderd",
+                                    "Festival",
+                                    "City"])
+
+
     cleaned.columns = cleaned.columns.str.strip()
 
+
+
+
+    #conditons prob in weather
+    cleaned["Weatherconditions"] = (
+        cleaned["Weatherconditions"].astype("string")
+        .str.strip()
+        .str.removeprefix("conditions")
+        .str.strip()
+        .replace(["NaN", "nan", "None", "null", ""], pd.NA)
+        .str.title()
+    )
+
+    #nan in weather
+    weather_mode = cleaned["Weatherconditions"].mode()
+    cleaned["Weatherconditions"] = cleaned["Weatherconditions"].fillna(weather_mode.iloc[0])
+
+
     for column in CATEGORICAL_COLUMNS:
+        #categorical features:
         cleaned[column] = (
             cleaned[column].astype("string")
             .str.strip()
+            .replace(["NaN", "nan", "None", "null", ""], pd.NA)
             .str.title()
         )
+
+
+
+
+
+
+
+    #Time features:
+    for column in TIME_COLUMNS:
+        cleaned[column] = (
+            cleaned[column].astype("string")
+            .str.strip()
+            .replace(["NaN", "nan", "None", "null", ""], pd.NA)
+        )
+        cleaned[column] = pd.to_timedelta(cleaned[column], errors="coerce")
+
+
+
+
+
+    #time taken min problem
+    cleaned["Time_taken(min)"]= pd.to_numeric(
+        cleaned["Time_taken(min)"].str.removeprefix("(min)"), errors="coerce"
+    )
 
     for column in NUMERICAL_COLUMNS:
         cleaned[column] = (
@@ -30,8 +107,58 @@ def clean_delivery_data(df):
             )
         )
 
-    cleaned = cleaned.drop_duplicates().copy()
-    cleaned = cleaned.dropna(subset=["Delivery_Time_min"]).copy()
+
+    #fix latitude longtitude problem
+    latitude_wrong = (
+            cleaned["Restaurant_latitude"] * cleaned["Delivery_location_latitude"] < 0
+    )
+    longitude_wrong = (
+            cleaned["Restaurant_longitude"] * cleaned["Delivery_location_longitude"] < 0
+    )
+
+
+    columns = [
+        "Restaurant_latitude",
+        "Restaurant_longitude",
+    ]
+
+    cleaned.loc[latitude_wrong | longitude_wrong , columns] =(
+        cleaned.loc[latitude_wrong | longitude_wrong, columns].abs()
+    )
+
+
+
+
+
+
+    #Road traffic density
+
+    cleaned["Road_traffic_density"] = cleaned["Road_traffic_density"].replace({
+        "Low": 0,
+        "Medium": 1,
+        "High": 2,
+        "Jam": 3
+    }).copy()
+
+    cleaned["Road_traffic_density"] =  cleaned["Road_traffic_density"].fillna(cleaned["Road_traffic_density"].mode()[0])
+
+
+
+
+
+
+    cleaned = cleaned.dropna(subset=[
+        "Time_taken(min)",
+        "Restaurant_latitude",
+        "Restaurant_longitude",
+        "Delivery_location_latitude",
+        "Delivery_location_longitude",
+        "Time_Order_picked"
+    ]).copy()
+
+
+
+
 
     # cleaned["Delivery_Time_min"] = cleaned["Delivery_Time_min"].abs()
     # cleaned["Preparation_Time_min"] = cleaned["Preparation_Time_min"].abs()
@@ -42,13 +169,6 @@ def clean_delivery_data(df):
     # cleaned["Traffic_Level"] = cleaned["Traffic_Level"].fillna(cleaned["Traffic_Level"].mode()[0])
     # cleaned["Time_of_Day"] = cleaned["Time_of_Day"].fillna(cleaned["Time_of_Day"].mode()[0])
     # cleaned["Courier_Experience_yrs"] = cleaned["Courier_Experience_yrs"].fillna(cleaned["Courier_Experience_yrs"].median())
-
-    for column in NUMERICAL_COLUMNS:
-        print(
-            column,
-            "min:", cleaned[column].min(),
-            "max:", cleaned[column].max()
-        )
 
     return cleaned.reset_index(drop=True)
 

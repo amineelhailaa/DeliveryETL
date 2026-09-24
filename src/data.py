@@ -41,7 +41,6 @@ def clean_delivery_data(df):
                                     "Delivery_person_Ratings",
                                     "Type_of_order",
                                     "multiple_deliveries",
-                                    "Order_Date",
                                     "Festival",
                                     "City",
                                     "Vehicle_condition"])
@@ -171,7 +170,7 @@ def clean_delivery_data(df):
 
     #hundling time
     estimate_order_time = ( cleaned["Time_Order_picked"] - pd.Timedelta(minutes=10) ) % pd.Timedelta(days=1)
-    cleaned = cleaned["Time_Orderd"].fillna(estimate_order_time)
+    cleaned["Time_Orderd"] = cleaned["Time_Orderd"].fillna(estimate_order_time)
 
 
 

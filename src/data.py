@@ -145,6 +145,15 @@ def clean_delivery_data(df):
 
 
 
+    # Keep coordinates located within India
+    valid_coordinates = (
+            cleaned["Restaurant_latitude"].between(6, 38)
+            & cleaned["Restaurant_longitude"].between(68, 98)
+            & cleaned["Delivery_location_latitude"].between(6, 38)
+            & cleaned["Delivery_location_longitude"].between(68, 98)
+    )
+
+    cleaned = cleaned.loc[valid_coordinates].copy()
 
 
 

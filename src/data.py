@@ -41,7 +41,6 @@ def clean_delivery_data(df):
                                     "Type_of_order",
                                     "multiple_deliveries",
                                     "Order_Date",
-                                    "Time_Orderd",
                                     "Festival",
                                     "City",
                                     "Vehicle_condition"])

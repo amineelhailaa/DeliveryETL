@@ -43,7 +43,8 @@ def clean_delivery_data(df):
                                     "Order_Date",
                                     "Time_Orderd",
                                     "Festival",
-                                    "City"])
+                                    "City",
+                                    "Vehicle_condition"])
 
 
     cleaned.columns = cleaned.columns.str.strip()
@@ -171,6 +172,7 @@ def clean_delivery_data(df):
     # cleaned["Courier_Experience_yrs"] = cleaned["Courier_Experience_yrs"].fillna(cleaned["Courier_Experience_yrs"].median())
 
     return cleaned.reset_index(drop=True)
+
 
 
 

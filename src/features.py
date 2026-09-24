@@ -28,7 +28,7 @@ def add_distance_km(df):
 
 
 def add_order_hour(df):
-    df["order_hour"] = df["Time_Orderd"].dt.total_seconds()/3600
+    df["order_hour"] = df["Time_Orderd"].dt.components["hours"]
 
     return df
 

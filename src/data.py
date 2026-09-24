@@ -21,7 +21,8 @@ NUMERICAL_COLUMNS = [
 
 
 TIME_COLUMNS = [
-    "Time_Order_picked"
+    "Time_Order_picked",
+    "Time_Orderd"
 ]
 
 
@@ -168,16 +169,12 @@ def clean_delivery_data(df):
 
 
 
+    #hundling time
+    estimate_order_time = ( cleaned["Time_Order_picked"] - pd.Timedelta(minutes=10) ) % pd.Timedelta(days=1)
+    cleaned = cleaned["Time_Orderd"].fillna(estimate_order_time)
 
-    # cleaned["Delivery_Time_min"] = cleaned["Delivery_Time_min"].abs()
-    # cleaned["Preparation_Time_min"] = cleaned["Preparation_Time_min"].abs()
-    # cleaned["Distance_km"] = cleaned["Distance_km"].abs()
-    # cleaned["Courier_Experience_yrs"] = cleaned["Courier_Experience_yrs"].abs()
 
-    # cleaned["Weather"] = cleaned["Weather"].fillna(cleaned["Weather"].mode()[0])
-    # cleaned["Traffic_Level"] = cleaned["Traffic_Level"].fillna(cleaned["Traffic_Level"].mode()[0])
-    # cleaned["Time_of_Day"] = cleaned["Time_of_Day"].fillna(cleaned["Time_of_Day"].mode()[0])
-    # cleaned["Courier_Experience_yrs"] = cleaned["Courier_Experience_yrs"].fillna(cleaned["Courier_Experience_yrs"].median())
+
 
     return cleaned.reset_index(drop=True)
 

@@ -2,9 +2,11 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.impute import SimpleImputer
+from sklearn.model_selection import KFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import cross_validate
 
 NUMERICAL_COL = [
     "distance_km",
@@ -77,3 +79,22 @@ def train_pipelines( X_train, y_train):
         model_name: train_pipeline(pipeline, X_train, y_train)
         for model_name, pipeline in create_pipelines().items()
     }
+
+
+
+def create_cross_validation():
+    return KFold(
+        n_splits = 5,
+        shuffle = True,
+        random_state=42
+    )
+
+
+def cross_validate_pipeline(pipeline ,X_train, y_train):
+
+
+
+def cross_validate_pipelines(X_train, y_train):
+    pipelines = create_pipelines()
+    cv = create_cross_validation()
+

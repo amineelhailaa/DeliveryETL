@@ -183,7 +183,8 @@ def clean_delivery_data(df):
 
 def create_train_test_split(cleaned_df, test_size=0.2, random_state=42):
     #target
-    X = cleaned_df.drop(columns=["Delivery_Time_min", "Order_ID", "Preparation_Time_min"])
-    Y = cleaned_df["Delivery_Time_min"]
+    X = cleaned_df.drop(columns=["Time_taken(min)"])
+    Y = cleaned_df["Time_taken(min)"]
+
     x_train, x_test , y_train, y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
     return x_train, x_test , y_train, y_test

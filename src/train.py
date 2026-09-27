@@ -136,6 +136,9 @@ def cross_validate_pipeline(pipeline, X_train, y_train, cv):
         "validation_rmse": -scores["test_rmse"].mean(),
         "validation_r2": scores["test_r2"].mean(),
         "training_mae": -scores["train_mae"].mean(),
+        "training_mse": -scores["train_mse"].mean(),
+        "training_rmse": -scores["train_rmse"].mean(),
+        "training_r2": scores["train_r2"].mean(),
         "fit_time": scores["fit_time"].mean(),
     }
 

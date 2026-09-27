@@ -1,5 +1,5 @@
 from sklearn.dummy import DummyRegressor
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.tree import DecisionTreeRegressor
 
@@ -85,6 +85,14 @@ RANDOM_FOREST_SEARCH_SPACE = {
 }
 
 
+HIST_GRADIENT_BOOSTING_SEARCH_SPACE = {
+    "model__learning_rate": [0.05, 0.08, 0.1],
+    "model__max_iter": [150, 250, 350],
+    "model__max_leaf_nodes": [15, 31, 63],
+    "model__l2_regularization": [0, 1, 5],
+}
+
+
 MODEL_CONFIGS = {
     "dummy_baseline": {
         "estimator": DummyRegressor(
@@ -116,6 +124,18 @@ MODEL_CONFIGS = {
             n_jobs=-1,
         ),
         "search_space": RANDOM_FOREST_SEARCH_SPACE,
+        "n_iter": 15,
+    },
+    "hist_gradient_boosting": {
+        "estimator": HistGradientBoostingRegressor(
+            max_iter=250,
+            learning_rate=0.08,
+            max_leaf_nodes=31,
+            l2_regularization=1,
+            early_stopping=False,
+            random_state=RANDOM_STATE,
+        ),
+        "search_space": HIST_GRADIENT_BOOSTING_SEARCH_SPACE,
         "n_iter": 15,
     },
 }

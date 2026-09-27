@@ -1,22 +1,31 @@
+import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import KFold, cross_validate
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
 from src.model_config import MODEL_CONFIGS, RANDOM_STATE
 
 from sklearn.base import clone
+
 NUMERICAL_COL = [
     "distance_km",
-    "Road_traffic_density",
     "order_hour",
+    "Delivery_person_Age",
+    "Delivery_person_Ratings",
+    "Vehicle_condition",
+    "multiple_deliveries",
 ]
 
 CATEGORICAL_COL = [
     "Weatherconditions",
     "Type_of_vehicle",
+    "Festival",
+    "City",
+    "Type_of_order",
 ]
 
+ORDINAL_COL = ["Road_traffic_density"]
 
 
 def create_preprocessor():
@@ -29,8 +38,19 @@ def create_preprocessor():
 
     categorical_pipeline = Pipeline(
         [
-            ("imputer", SimpleImputer(strategy="most_frequent")),
-            ("onehot", OneHotEncoder(handle_unknown="ignore")),
+            ("imputer", SimpleImputer(strategy="most_frequent", missing_values=pd.NA)),
+            ("onehot", OneHotEncoder(drop="if_binary",handle_unknown="ignore")),
+        ]
+    )
+
+    ordinal_pipeline = Pipeline(
+        [
+            ("imputer", SimpleImputer(strategy="most_frequent", missing_values=pd.NA)),
+            ("ordinal", OrdinalEncoder(
+                categories=[["Low", "Medium", "High", "Jam"]],
+                handle_unknown="use_encoded_value",
+                unknown_value=-1,
+            )),
         ]
     )
 
@@ -38,6 +58,7 @@ def create_preprocessor():
         [
             ("numeric", numeric_pipeline, NUMERICAL_COL),
             ("categorical", categorical_pipeline, CATEGORICAL_COL),
+            ("ordinal", ordinal_pipeline, ORDINAL_COL),
         ]
     )
 
@@ -73,7 +94,7 @@ def create_cross_validation():
     return KFold(
         n_splits=5,
         shuffle=True,
-        random_state= RANDOM_STATE
+        random_state=RANDOM_STATE
     )
 
 

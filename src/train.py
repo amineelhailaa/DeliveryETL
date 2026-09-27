@@ -3,7 +3,9 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import KFold, cross_validate
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler, FunctionTransformer
+
+from src.features import create_features
 from src.model_config import MODEL_CONFIGS, RANDOM_STATE
 
 from sklearn.base import clone
@@ -26,6 +28,21 @@ CATEGORICAL_COL = [
 ]
 
 ORDINAL_COL = ["Road_traffic_density"]
+
+
+
+
+
+feature_creator = FunctionTransformer(
+    create_features,
+    validate=False
+)
+
+
+
+
+
+
 
 
 def create_preprocessor():
@@ -66,6 +83,7 @@ def create_preprocessor():
 def create_model_pipeline(model):
     return Pipeline(
         [
+            ("feature_creator", feature_creator),
             ("preprocessor", create_preprocessor()),
             ("model", clone(model)),
         ]

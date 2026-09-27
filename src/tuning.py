@@ -29,7 +29,7 @@ def tune_model(model_name, X_train, y_train):
         },
         cv = tuning_cv,
         random_state= RANDOM_STATE,
-        refit= True,
+        refit= "mae",
         return_train_score= True,
         verbose= 1
     )

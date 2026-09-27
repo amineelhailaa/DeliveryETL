@@ -31,7 +31,7 @@ ORDINAL_COL = ["Road_traffic_density"]
 def create_preprocessor():
     numeric_pipeline = Pipeline(
         [
-            ("imputer", SimpleImputer(strategy="median")),
+            ("imputer", SimpleImputer(strategy="median", add_indicator=True)),
             ("scaler", StandardScaler()),
         ]
     )
@@ -39,7 +39,7 @@ def create_preprocessor():
     categorical_pipeline = Pipeline(
         [
             ("imputer", SimpleImputer(strategy="most_frequent", missing_values=pd.NA)),
-            ("onehot", OneHotEncoder(drop="if_binary",handle_unknown="ignore")),
+            ("onehot", OneHotEncoder(drop="if_binary",handle_unknown="ignore", sparse_output=False)),
         ]
     )
 

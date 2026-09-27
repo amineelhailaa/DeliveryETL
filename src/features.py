@@ -38,6 +38,7 @@ def add_order_hour(df):
 
 
 def create_features(df):
+    df = df.copy()
     df = add_distance_km(df)
     df = add_order_hour(df)
     return df

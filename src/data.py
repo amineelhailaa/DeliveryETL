@@ -170,11 +170,6 @@ def clean_delivery_data(df):
 
     cleaned = cleaned.dropna(subset=[
         "Time_taken(min)",
-        "Restaurant_latitude",
-        "Restaurant_longitude",
-        "Delivery_location_latitude",
-        "Delivery_location_longitude",
-        "Time_Order_picked"
     ]).copy()
 
     # hundling time

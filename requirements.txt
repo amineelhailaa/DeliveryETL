@@ -1,0 +1,12 @@
+numpy
+pandas
+matplotlib
+streamlit
+jupyterlab
+seaborn
+matplotlib
+scikit-learn
+joblib
+scipy
+ipykernel
+pathlib
